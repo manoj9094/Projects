@@ -1,0 +1,143 @@
+import java.applet.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.text.DecimalFormat;
+public class curr extends Applet implements ActionListener
+{
+  Label l1,l2,l3,l4,l5,l6,l7;
+  TextField t1,t2,t3,t4,t5,t6,t7;
+  Button b1,b2,b3,b4,b5,b6,b7;
+  public void init()
+  {
+      l1=new Label("Enter a input:           ");
+      l2=new Label("US Dollars:              ");
+      l3=new Label("UAE Dharams:             ");
+      l4=new Label("Kuwait Dinars:           ");
+      l5=new Label("Japan Yens:              ");
+      l6=new Label("European Euros:          ");
+      l7=new Label("Indian Rupees:           ");
+      t1=new TextField(35);
+      t2=new TextField(35);
+      t3=new TextField(35);
+      t4=new TextField(35);
+      t5=new TextField(35);
+      t6=new TextField(35);
+      t7=new TextField(35);
+      b1=new Button("input as US Dollars");
+      b2=new Button("input as AED       ");
+      b3=new Button("input as Dinars    ");
+      b4=new Button("input as Yens      ");
+      b5=new Button("input as Euros     ");
+      b6=new Button("input as Rupee     ");
+      b7=new Button("Clear              ");
+
+      add(l1);
+      add(t1);
+      add(b1);
+      add(b2);
+      add(b3);
+      add(b4);
+      add(b5);
+      add(b6);
+      add(l2);
+      add(t2);
+      add(l3);
+      add(t3);
+      add(l4);
+      add(t4);
+      add(l5);
+      add(t5);
+      add(l6);
+      add(t6);
+      add(l7);
+      add(t7);
+      add(b7);
+
+      b1.addActionListener(this);
+      b2.addActionListener(this);
+      b3.addActionListener(this);
+      b4.addActionListener(this);
+      b5.addActionListener(this);
+      b6.addActionListener(this);
+      b7.addActionListener(this);
+
+  }
+  public void actionPerformed(ActionEvent ae)
+  {
+      String a=t1.getText();
+      double v,ou;
+      DecimalFormat f=new DecimalFormat("###.####");
+      if(ae.getSource()==b1)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v)+" dollars"));
+        t3.setText(String.valueOf(f.format(v*3.67)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v*0.31)+" dinars"));
+        t5.setText(String.valueOf(f.format(v*107.36)+" yens"));
+        t6.setText(String.valueOf(f.format(v*0.88)+" euros"));
+        t7.setText(String.valueOf(f.format(v*75.83)+" rupees"));
+      }
+      else if(ae.getSource()==b2)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v*0.27)+" dollars"));
+        t3.setText(String.valueOf(f.format(v)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v*0.084)+" dinars"));
+        t5.setText(String.valueOf(f.format(v*29.22)+" yens"));
+        t6.setText(String.valueOf(f.format(v*0.24)+" euros"));
+        t7.setText(String.valueOf(f.format(v*20.64)+" rupees"));
+      }
+      else if(ae.getSource()==b3)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v*3.25)+" dollars"));
+        t3.setText(String.valueOf(f.format(v*11.94)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v)+" dinars"));
+        t5.setText(String.valueOf(f.format(v*348.91)+" yens"));
+        t6.setText(String.valueOf(f.format(v*2.87)+" euros"));
+        t7.setText(String.valueOf(f.format(v*246.66)+" rupees"));
+      }
+      else if(ae.getSource()==b4)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v*0.0093)+" dollars"));
+        t3.setText(String.valueOf(f.format(v*0.034)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v*0.0029)+" dinars"));
+        t5.setText(String.valueOf(f.format(v)+" yens"));
+        t6.setText(String.valueOf(f.format(v*0.0082)+" euros"));
+        t7.setText(String.valueOf(f.format(v*0.71)+" rupees"));
+      }
+      else if(ae.getSource()==b5)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v*1.13)+" dollars"));
+        t3.setText(String.valueOf(f.format(v*4.15)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v*0.35)+" dinars"));
+        t5.setText(String.valueOf(f.format(v*121.31)+" yens"));
+        t6.setText(String.valueOf(f.format(v)+" euros"));
+        t7.setText(String.valueOf(f.format(v*85.83)+" rupees"));
+      }
+      else if(ae.getSource()==b6)
+      {
+	v=Float.parseFloat(t1.getText());
+        t2.setText(String.valueOf(f.format(v*0.013)+" dollars"));
+        t3.setText(String.valueOf(f.format(v*0.048)+" dirhams"));
+        t4.setText(String.valueOf(f.format(v*0.0041)+" dinars"));
+        t5.setText(String.valueOf(f.format(v*1.41)+" yens"));
+        t6.setText(String.valueOf(f.format(v*0.012)+" euros"));
+        t7.setText(String.valueOf(f.format(v)+" rupees"));
+      }
+      else if(ae.getSource()==b7)
+      {
+          t1.setText("");
+          t2.setText("");
+          t3.setText("");
+          t4.setText("");
+          t5.setText("");
+          t6.setText("");
+          t7.setText("");
+
+      }
+     
+  }
+}
