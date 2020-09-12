@@ -1,0 +1,164 @@
+//Transmitter Code:
+
+#include <SPI.h>
+#include <LoRa.h>
+#include <Servo.h>
+int analogInPin = A6;
+int moisture = A5;
+int sensorValue = 0;
+int servoPin = 5;
+int counter = 0;
+float time=0,distance=0;
+Servo servo;
+void setup() {
+pinMode(moisture, INPUT);
+servo.attach(servoPin);
+pinMode(4,OUTPUT);
+pinMode(3,INPUT);
+Serial.begin(9600);
+while (!Serial);
+Serial.println("LoRa Sender");
+if (!LoRa.begin(433E6)) { /////change it to your module freq in my case it is 433 so it is 433E6.
+Serial.println("Starting LoRa failed!");
+while(1);
+}
+}
+void loop() {
+ sensorValue = analogRead(analogInPin);
+ if(sensorValue < 600){
+ Serial.println("waste is sensed");
+ int Value = analogRead(moisture);
+ Serial.println(Value);
+ if (Value <= 500)
+ {
+ for (int j = 180; j<=360; j++)
+ {
+ servo.write(j);
+ delay(15);
+ }
+ for (int j = 360; j>=180; j--)
+ {
+ servo.write(j);
+ delay(1);
+ }
+}
+else
+{
+ for (int j = 180; j>=0; j--)
+ {
+ servo.write(j);
+ delay(15);
+ }
+ for (int j = 0; j<=180; j++)
+ {
+ servo.write(j);
+ delay(1);
+ }
+}
+}
+
+digitalWrite(4,LOW);
+delayMicroseconds(2);
+digitalWrite(4,HIGH);
+delayMicroseconds(10);
+digitalWrite(4,LOW);
+delayMicroseconds(2);
+time=pulseIn(3,HIGH);
+distance=time*340/20000;
+Serial.println();
+Serial.print("Distance:");
+Serial.print(distance);
+Serial.print("cm");
+if(distance<4)
+{
+Serial.print("Sending packet: ");
+Serial.println(counter);
+// send packet
+ LoRa.beginPacket();
+ LoRa.print("Dust bin is full");
+ LoRa.print(counter);
+ LoRa.print("-packet recieved");
+ LoRa.endPacket();
+counter++;
+delay(5000);
+}
+}
+
+//Receiver Code:
+
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+#include <SPI.h>
+#include <LoRa.h>
+#define ss 15
+#define rst 16
+#define dio0 4
+#define FIREBASE_HOST “smart-3db53.firebaseio.com"
+#define FIREBASE_AUTH "luNo6E3QGTffNTZsP7Uyorh4Zsn2"
+#define WIFI_SSID "MANOJ"
+#define WIFI_PASSWORD "960308008909430"
+void setup() {
+ Serial.begin(115200);
+Serial.println("LoRa Receiver Callback");
+ LoRa.setPins(ss, rst, dio0);
+ if (!LoRa.begin(433E6)) {
+ Serial.println("Starting LoRa failed!");
+ while (1);
+ }
+ // connect to wifi.
+ WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+ Serial.print("connecting");
+ while (WiFi.status() != WL_CONNECTED) {
+ Serial.print(".");
+ delay(500);
+ }
+ Serial.println();
+ Serial.print("connected: ");
+ Serial.println(WiFi.localIP());
+ Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+}
+int n = 0,i=0;
+char s[100];
+void loop() {
+ // set value
+ int packetSize = LoRa.parsePacket();
+// Serial.print(packetSize);
+ if (packetSize) {
+ // received a packet
+ Serial.print("Received packet '");
+i=0;
+ // read packet
+ if (LoRa.available()) {
+ s[i++]= (char)LoRa.read();
+ Serial.print(s);
+ }
+ s[i]='\0';
+ int k=s[0]-48;
+ // print RSSI of packet
+ Serial.print("' with RSSI ");
+ Serial.println(LoRa.packetRssi());
+
+ // set string value
+ if(k==1)
+Firebase.setString("message", “Dust bin is full");
+else
+Firebase.setString("message", “Dust bin has space");
+ // handle error
+ if (Firebase.failed()) {
+ Serial.print("setting /message failed:");
+ Serial.println(Firebase.error());
+ return;
+ }
+ delay(500);
+ // append a new value to /logs
+ String name = Firebase.pushInt("logs", k);
+ // handle error
+ if (Firebase.failed()) {
+ Serial.print("pushing /logs failed:");
+ Serial.println(Firebase.error());
+ return;
+ }
+ Serial.print("pushed: /logs/");
+ Serial.println(name);
+ delay(500);
+ }
